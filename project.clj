@@ -1,6 +1,6 @@
 (defproject org.clojars.akiel/spec-bnf "0.1-SNAPSHOT"
   :description "Generate BNFs from Clojure Spec."
-  :url "http://example.com/FIXME"
+  :url "https://github.com/alexanderkiel/spec-bnf"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
