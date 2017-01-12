@@ -1,6 +1,6 @@
 # Spec BNF
 
-This library can generate BNF's from Clojure spec.
+A library for generating BNF's from Clojure spec.
 
 ## Install
 
