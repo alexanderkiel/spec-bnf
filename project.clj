@@ -1,4 +1,4 @@
-(defproject org.clojars.akiel/spec-bnf "0.1"
+(defproject org.clojars.akiel/spec-bnf "0.2-SNAPSHOT"
   :description "Generate BNFs from Clojure Spec."
   :url "https://github.com/alexanderkiel/spec-bnf"
   :license {:name "Eclipse Public License"

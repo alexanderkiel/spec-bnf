@@ -7,7 +7,7 @@ A library for generating BNF's from Clojure spec.
 To install, just add the following to your project dependencies:
 
 ```clojure
-[org.clojars.akiel/spec-bnf "0.1"]
+[org.clojars.akiel/spec-bnf "0.2-SNAPSHOT"]
 ```
 
 ## Usage
