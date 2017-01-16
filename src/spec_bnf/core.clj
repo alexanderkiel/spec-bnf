@@ -65,6 +65,15 @@
       (conj parts {::type :terminal ::term "]"}))
     parts))
 
+(declare rhs)
+
+(defn- key-val-pair [kw level]
+  [{::type :terminal
+    ::term kw}
+   {::type :terminal
+    ::term " "}
+   (rhs kw (inc level))])
+
 (s/def ::spec (s/or :kw keyword?
                     :sym symbol?
                     :set set?
@@ -111,7 +120,7 @@
           clojure.spec/and
           (rhs (first args) level)
 
-          clojure.spec/or
+          (clojure.spec/or clojure.spec/alt)
           {::type :alternation
            ::rhss
            (into
@@ -145,7 +154,17 @@
                 dispatch-fn (.dispatchFn mm)
                 gen-val #(condp = dispatch-fn first [%])]
             {::type :alternation
-             ::rhss (map #(rhs (s/form (mm (gen-val %))) level) (keys methods))}))))))
+             ::rhss (map #(rhs (s/form (mm (gen-val %))) level) (keys methods))})
+
+          clojure.spec/keys
+          (let [{:keys [req-un opt-un]} args]
+            {::type :concatenation
+             ::rhss
+             (concat
+               [{::type :terminal ::term "{"}]
+               (mapcat #(key-val-pair % level) req-un)
+               (mapcat #(key-val-pair % level) opt-un)
+               [{::type :terminal ::term "}"}])}))))))
 
 (s/fdef rule
   :args (s/cat :spec-kw keyword?)
@@ -232,7 +251,16 @@
     (keys (s/registry))))
 
 (defn emit-grammar
+  "Emits a grammar.
+
+  Opts are:
+
+   :ns-aliases - a map of namespace to alias"
   {:arglists '([grammar & {:as opts}])}
   [{:keys [::rules]} & {:keys [ns-aliases] :as opts}]
-  (let [indent (apply max (map count (map #(emit-identifier % ns-aliases) (map ::lhs rules))))]
-    (str/join "\n" (map #(emit-rule % indent opts) rules))))
+  (when (seq rules)
+    (let [indent (apply max (map count (map #(emit-identifier % ns-aliases) (map ::lhs rules))))]
+      (->> rules
+           (sort-by #(-> % ::lhs (emit-identifier ns-aliases)))
+           (map #(emit-rule % indent opts))
+           (str/join "\n")))))
